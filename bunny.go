@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+var version = "0.1.0"
+var runningMsg = "                                 \n_____                 _____\n| __  |_ _ ___ ___ _ _|   __|___\n| __ -| | |   |   | | |  |  | . |\n|_____|___|_|_|_|_|_  |_____|___|\n                  |___|\nBunnyGo v%s\nServing HTTP on port %d...\nRunning on http://%s/"
+
 type Bunny struct {
 	Host        string
 	Port        int
@@ -55,9 +58,21 @@ func (bunny *Bunny) Controller(controller interface{}) {
 	bunny.controllers[clsName] = controller
 }
 
+func Version() string {
+	return version
+}
+
 func (bunny *Bunny) Run() {
 	http.HandleFunc("/", bunny.router)
-	err := http.ListenAndServe(":9000", nil)
+	if bunny.Host == "" {
+		bunny.Host = "127.0.0.1"
+	}
+	if bunny.Port == 0 {
+		bunny.Port = 9000
+	}
+	addr := fmt.Sprintf("%s:%d", bunny.Host, bunny.Port)
+	fmt.Printf(runningMsg, version, bunny.Port, addr)
+	err := http.ListenAndServe(addr, nil)
 	if err != nil {
 		log.Fatal("Error", err)
 	}
