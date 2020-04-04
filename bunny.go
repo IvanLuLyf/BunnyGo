@@ -1,4 +1,4 @@
-package BunnyGo
+package bunnygo
 
 import (
 	"fmt"
@@ -11,12 +11,14 @@ import (
 var version = "0.1.0"
 var runningMsg = "                                 \n_____                 _____\n| __  |_ _ ___ ___ _ _|   __|___\n| __ -| | |   |   | | |  |  | . |\n|_____|___|_|_|_|_|_  |_____|___|\n                  |___|\nBunnyGo v%s\nServing HTTP on port %d...\nRunning on http://%s/"
 
+// Bunny is the BunnyGo framework instance
 type Bunny struct {
 	Host        string
 	Port        int
 	controllers map[string]interface{}
 }
 
+// Init initialize BunnyGo Framework
 func (bunny *Bunny) Init() {
 	bunny.controllers = make(map[string]interface{})
 }
@@ -51,6 +53,7 @@ func (bunny *Bunny) router(writer http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Controller add Controller to Bunny
 func (bunny *Bunny) Controller(controller interface{}) {
 	classType := reflect.TypeOf(controller)
 	clsName := classType.Name()
@@ -58,10 +61,12 @@ func (bunny *Bunny) Controller(controller interface{}) {
 	bunny.controllers[clsName] = controller
 }
 
+// Version returns version of BunnyGo
 func Version() string {
 	return version
 }
 
+// Run run BunnyGo framework
 func (bunny *Bunny) Run() {
 	http.HandleFunc("/", bunny.router)
 	if bunny.Host == "" {
